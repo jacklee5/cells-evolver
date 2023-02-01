@@ -10,4 +10,4 @@ const Random = {
     }
 }
 
-const { Engine, Bodies, Body, Composite } = Matter;
+const { Engine, Bodies, Body, Composite, Events } = Matter;

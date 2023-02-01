@@ -1,4 +1,4 @@
-importScripts("../lib/matter.min.js", "./_utils.js", "./_constants.js", "./Simulation.js", "./Cell.js");
+importScripts("../lib/matter.min.js", "./_utils.js", "./_constants.js", "./Simulation.js", "./Cell.js", "./Food.js");
 
 let sim = null;
 
@@ -10,7 +10,8 @@ const handlers = {
     "blur": data => {
         sim = new Simulation();
         sim.restore(data);
-        sim.start();
+        if (!DEV)
+            sim.start();
         console.log("starting simulation headless");
     },
     "focus": sync => {

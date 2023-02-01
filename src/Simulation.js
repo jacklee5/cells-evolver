@@ -23,8 +23,8 @@ class Simulation {
 
     restore = (state) => {
         this.tick = state.tick;
-        this.cells = state.cells.map(cell => new Cell(cell));
-        this.food = state.food;
+        this.cells = state.cells.map(cell => Cell.fromObject(cell));
+        this.food = state.food.map(food => Food.fromObject(food));
         Composite.add(this.engine.world, this.cells.map(cell => cell.body));
     }
 
@@ -36,11 +36,9 @@ class Simulation {
         // spawn food
         if (this.tick % FOOD_SPAWN_RATE == 0) {
             for (let i = 0; i < FOOD_SPAWN_AMOUNT; i++) {
-                this.food.push({
-                    x: Random.randInt(0, SIM_WIDTH),
-                    y: Random.randInt(0, SIM_HEIGHT),
-                    amount: Random.randInt(0, 10 * 2)
-                });
+                const newFood = new Food();
+                this.food.push(newFood);
+                Composite.add(this.engine.world, newFood);
             }
         }
 
@@ -61,14 +59,14 @@ class Simulation {
 
         // draw food
         fill("orange");
-        this.food.forEach(food => circle(food.x, food.y, food.amount));
+        this.food.forEach(food => food.render());
     }
 
     getState = () => {
         return {
             tick: this.tick,
             cells: this.cells.map(cell => cell.toObject()),
-            food: this.food
+            food: this.food.map(food => food.toObject())
         }
     }
 }

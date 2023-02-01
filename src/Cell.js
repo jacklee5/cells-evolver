@@ -2,8 +2,6 @@ const RADIUS = 10;
 const TURN_SPEED = 0.1; // radians
 class Cell {
     constructor(state) {
-        if (state) return this.fromObject(state);
-
         const x = Random.randInt(0, SIM_WIDTH);
         const y = Random.randInt(0, SIM_HEIGHT);
         this.body = Bodies.circle(x, y, RADIUS);
@@ -76,8 +74,8 @@ class Cell {
         return this.body.angle;
     }
 
-    fromObject(obj) {
-        this.body = new Bodies.circle(obj.x, obj.y, RADIUS);
+    static fromObject(obj) {
+        return new Cell(obj);
     }
 
     toObject() {
