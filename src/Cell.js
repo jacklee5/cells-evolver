@@ -1,10 +1,10 @@
-const RADIUS = 10;
+const DEFAULT_RADIUS = 10;
 const TURN_SPEED = 0.1; // radians
 class Cell {
     constructor(options) {
         const x = options?.x || Random.randInt(0, SIM_WIDTH);
         const y = options?.y || Random.randInt(0, SIM_HEIGHT);
-        this.body = Bodies.circle(x, y, RADIUS);
+        this.body = Bodies.circle(x, y, DEFAULT_RADIUS);
         this.body.ref = this;
 
         this.foodToDigest = options?.foodToDigest || 0;
@@ -17,6 +17,8 @@ class Cell {
         if (this.x > SIM_WIDTH) Body.setPosition(this.body, {x: 0, y: this.y});
         if (this.y < 0) Body.setPosition(this.body, {x: this.x, y: SIM_HEIGHT});
         if (this.y > SIM_HEIGHT) Body.setPosition(this.body, {x: this.x, y: 0});
+
+        this.digest(Math.min(this.foodToDigest, DIGEST_RATE));
     }
 
     // travel in a random direction
@@ -24,6 +26,11 @@ class Cell {
         if (Random.randInt(1, 10) == 1) 
             Body.setAngularVelocity(this.body, Random.rand(-TURN_SPEED, TURN_SPEED));
         this.forward(1);
+    }
+
+    digest(amt) {
+        this.foodToDigest -= amt;
+        this.mass += amt;
     }
 
     forward (dist) {
@@ -60,9 +67,9 @@ class Cell {
 
     render() {
         fill("red");
-        circle(this.x, this.y, RADIUS * 2);
+        circle(this.x, this.y, this.radius * 2);
         fill("blue");
-        circle(this.x + Math.cos(this.r) * RADIUS, this.y + Math.sin(this.r) * RADIUS, 10);
+        circle(this.x + Math.cos(this.r) * this.radius, this.y + Math.sin(this.r) * this.radius, 10);
     }
 
     get x() {
@@ -75,6 +82,19 @@ class Cell {
 
     get r() {
         return this.body.angle;
+    }
+
+    get radius() {
+        return this.body.circleRadius;
+    }
+
+    get mass() {
+        return this.body.circleRadius * this.body.circleRadius;
+    }
+
+    set mass(newMass) {
+        const scaleFactor = newMass / this.mass;
+        Body.scale(this.body, scaleFactor, scaleFactor);
     }
 
     static fromObject(obj) {
