@@ -8,11 +8,11 @@ function windowResized() {
 }
 
 function draw() {
-    if (headless) drawPaused();
+    if (headless) drawHeadless();
     else drawSim();
 }
 
-function drawPaused() {
+function drawHeadless() {
     background(255);
     fill("black");
     text("simulation running in background", width / 2, height / 2);
@@ -20,6 +20,5 @@ function drawPaused() {
 
 function drawSim() {
     background(0);
-    fill("red");
-    text(sim.state.tick, width / 2, height / 2);
+    sim.render();
 }
