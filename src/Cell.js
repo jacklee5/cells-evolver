@@ -1,10 +1,13 @@
 const RADIUS = 10;
 const TURN_SPEED = 0.1; // radians
 class Cell {
-    constructor(state) {
-        const x = Random.randInt(0, SIM_WIDTH);
-        const y = Random.randInt(0, SIM_HEIGHT);
+    constructor(options) {
+        const x = options?.x || Random.randInt(0, SIM_WIDTH);
+        const y = options?.y || Random.randInt(0, SIM_HEIGHT);
         this.body = Bodies.circle(x, y, RADIUS);
+        this.body.ref = this;
+
+        this.foodToDigest = options?.foodToDigest || 0;
     }
 
     update() {
@@ -81,7 +84,8 @@ class Cell {
     toObject() {
         return {
             x: this.x,
-            y: this.y
+            y: this.y,
+            foodToDigest: this.foodToDigest
         };
     }
 }

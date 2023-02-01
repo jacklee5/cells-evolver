@@ -9,6 +9,25 @@ class Simulation {
                 x: 0,
                 y: 0
             }
+        }); 
+        Events.on(this.engine, "collisionActive", ({pairs}) => {
+            pairs.forEach(pair => {
+                // food eating
+                // assuming that food is always body B because it is created later
+                if (pair.bodyB.ref instanceof Food && pair.bodyA.ref instanceof Cell) {
+                    const cell = pair.bodyA.ref;
+                    const food = pair.bodyB.ref;
+                    const eaten = Math.min(food.amount, EAT_RATE);
+
+                    cell.foodToDigest += eaten;
+                    food.consume(eaten);
+
+                    if (food.amount == 0) { // remove food if empty
+                        Composite.remove(this.engine.world, food.body);
+                        this.food = this.food.filter(el => el !== food);
+                    }
+                }
+            });
         });
     }
 
@@ -38,7 +57,7 @@ class Simulation {
             for (let i = 0; i < FOOD_SPAWN_AMOUNT; i++) {
                 const newFood = new Food();
                 this.food.push(newFood);
-                Composite.add(this.engine.world, newFood);
+                Composite.add(this.engine.world, newFood.body);
             }
         }
 
